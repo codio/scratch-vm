@@ -16,6 +16,7 @@ const MathUtil = require('./util/math-util');
 const Runtime = require('./engine/runtime');
 const StringUtil = require('./util/string-util');
 const formatMessage = require('format-message');
+const Base64Util = require('./util/base64-util');
 
 const Variable = require('./engine/variable');
 const newBlockIds = require('./util/new-block-ids');
@@ -289,6 +290,56 @@ class VirtualMachine extends EventEmitter {
         return this.runtime.getPeripheralIsConnected(extensionId);
     }
 
+    loadCodioProject () {
+        return new Promise((resolve, reject) => {
+            const {codio} = window;
+            if (codio) {
+                codio.loaded()
+                    .then(() => {
+                        const fileName = codio.getFileName();
+                        /* eslint-disable no-console */
+                        console.log('vm loadCodioFile fileName', fileName);
+                        if (typeof fileName !== 'string') {
+                            const err = `vm loadCodioFile - non string codio file name "${fileName}"`
+                            /* eslint-disable no-console */
+                            console.log(err);
+                            reject(new Error(err));
+                            return;
+                        }
+                        window.codio.getBinaryFile(fileName)
+                            .then(res => {
+                                const uint8array = Base64Util.base64ToUint8Array(res.content);
+                                const view = uint8array.buffer;
+                                this.loadProject(view)
+                                    .then(() => {
+                                        resolve();
+                                    })
+                                    .catch(error => {
+                                        reject(error);
+                                    });
+                            })
+                            .fail(msg => {
+                                const err = `vm loadCodioFile - error loading scratch file: ${msg}`;
+                                /* eslint-disable no-console */
+                                console.log(err, msg);
+                                reject(new Error(err));
+                            });
+                    })
+                    .fail(msg => {
+                        const err = `vm codio loaded - error: ${msg}`;
+                        /* eslint-disable no-console */
+                        console.log(err);
+                        reject(new Error(err));
+                    });
+            } else {
+                const err = 'vm no codio defined on window';
+                /* eslint-disable no-console */
+                console.log(err);
+                reject(new Error(err));
+            }
+        });
+    }
+
     /**
      * Load a Scratch project from a .sb, .sb2, .sb3 or json string.
      * @param {string | object} input A json string, object, or ArrayBuffer representing the project to load.
@@ -370,7 +421,8 @@ class VirtualMachine extends EventEmitter {
     /**
      * @returns {string} Project in a Scratch 3.0 JSON representation.
      */
-    saveProjectSb3 () {
+    saveProjectSb3 (type) {
+        type = type ? type : 'blob';
         const soundDescs = serializeSounds(this.runtime);
         const costumeDescs = serializeCostumes(this.runtime);
         const projectJson = this.toJSON();
@@ -384,13 +436,27 @@ class VirtualMachine extends EventEmitter {
         this._addFileDescsToZip(soundDescs.concat(costumeDescs), zip);
 
         return zip.generateAsync({
-            type: 'blob',
+            type: type,
             mimeType: 'application/x.scratch.sb3',
             compression: 'DEFLATE',
             compressionOptions: {
                 level: 6 // Tradeoff between best speed (1) and best compression (9)
             }
         });
+    }
+
+    saveProjectSb3ToCodio () {
+        const {codio} = window;
+        if (codio) {
+            const fileName = codio.getFileName();
+            return this.saveProjectSb3('base64').then(content =>
+                new Promise((resolve, reject) => {
+                    codio.saveBinaryFile(fileName, content)
+                        .then(resolve)
+                        .catch(reject);
+                })
+            );
+        }
     }
 
     /*
