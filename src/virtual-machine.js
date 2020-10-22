@@ -453,7 +453,7 @@ class VirtualMachine extends EventEmitter {
                 new Promise((resolve, reject) => {
                     codio.saveBinaryFile(fileName, content)
                         .then(resolve)
-                        .catch(reject);
+                        .fail(reject);
                 })
             );
         }
