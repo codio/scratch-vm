@@ -329,7 +329,7 @@ const loadCostume = function (md5ext, costume, runtime, optVersion) {
     const AssetType = runtime.storage.AssetType;
     const assetType = (ext === 'svg') ? AssetType.ImageVector : AssetType.ImageBitmap;
 
-    const costumePromise = runtime.storage.load(assetType, md5, ext);
+    const costumePromise = runtime.storage.load(assetType, md5, ext, costume.from);
     if (!costumePromise) {
         log.error(`Couldn't fetch costume asset: ${md5ext}`);
         return;
