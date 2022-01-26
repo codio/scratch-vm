@@ -311,8 +311,9 @@ class VirtualMachine extends EventEmitter {
                         }
                         window.codio.getBinaryFile(fileName)
                             .then(res => {
-                                const uint8array = Base64Util.base64ToUint8Array(res.content);
-                                const view = uint8array.buffer;
+                                // const uint8array = Base64Util.base64ToUint8Array(res.content);
+                                // const view = uint8array.buffer;
+                                const view = res.content;
                                 this.loadProject(view)
                                     .then(() => {
                                         resolve();
