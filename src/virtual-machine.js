@@ -309,10 +309,9 @@ class VirtualMachine extends EventEmitter {
                             reject(new Error(err));
                             return;
                         }
-                        window.codio.getBinaryFile(fileName)
+                        window.codio.getBinaryFileContent(fileName)
                             .then(res => {
-                                const uint8array = Base64Util.base64ToUint8Array(res.content);
-                                const view = uint8array.buffer;
+                                const view = res.content;
                                 this.loadProject(view)
                                     .then(() => {
                                         resolve();
