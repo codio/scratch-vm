@@ -16,7 +16,6 @@ const MathUtil = require('./util/math-util');
 const Runtime = require('./engine/runtime');
 const StringUtil = require('./util/string-util');
 const formatMessage = require('format-message');
-const Base64Util = require('./util/base64-util');
 
 const Variable = require('./engine/variable');
 const newBlockIds = require('./util/new-block-ids');
@@ -311,7 +310,7 @@ class VirtualMachine extends EventEmitter {
                         /* eslint-disable no-console */
                         console.log('vm loadCodioFile fileName', fileName);
                         if (typeof fileName !== 'string') {
-                            const err = `vm loadCodioFile - non string codio file name "${fileName}"`
+                            const err = `vm loadCodioFile - non string codio file name "${fileName}"`;
                             /* eslint-disable no-console */
                             console.log(err);
                             reject(new Error(err));
@@ -434,6 +433,7 @@ class VirtualMachine extends EventEmitter {
 
     /**
      * @returns {string} Project in a Scratch 3.0 JSON representation.
+     * @param {string} type - OutputByType in jszip, as a string.
      */
     saveProjectSb3 (type) {
         type = type ? type : 'blob';
