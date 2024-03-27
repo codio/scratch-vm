@@ -457,18 +457,18 @@ class VirtualMachine extends EventEmitter {
                 if (error) return reject(error);
                 resolve(res);
             });
-        })
+        });
 
-        return validationPromise.then(() => {
-            return zip.generateAsync({
+        return validationPromise.then(() =>
+            zip.generateAsync({
                 type: type,
                 mimeType: 'application/x.scratch.sb3',
                 compression: 'DEFLATE',
                 compressionOptions: {
                     level: 6 // Tradeoff between best speed (1) and best compression (9)
                 }
-            });
-        });
+            })
+        );
     }
 
     saveProjectSb3ToCodio () {
