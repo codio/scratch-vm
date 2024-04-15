@@ -449,14 +449,26 @@ class VirtualMachine extends EventEmitter {
         zip.file('project.json', projectJson);
         this._addFileDescsToZip(soundDescs.concat(costumeDescs), zip);
 
-        return zip.generateAsync({
-            type: type,
-            mimeType: 'application/x.scratch.sb3',
-            compression: 'DEFLATE',
-            compressionOptions: {
-                level: 6 // Tradeoff between best speed (1) and best compression (9)
-            }
+        const validationPromise = new Promise((resolve, reject) => {
+            const validate = require('scratch-parser');
+            // The second argument of false below indicates to the validator that the
+            // input should be parsed/validated as an entire project (and not a single sprite)
+            validate(projectJson, false, (error, res) => {
+                if (error) return reject(error);
+                resolve(res);
+            });
         });
+
+        return validationPromise.then(() =>
+            zip.generateAsync({
+                type: type,
+                mimeType: 'application/x.scratch.sb3',
+                compression: 'DEFLATE',
+                compressionOptions: {
+                    level: 6 // Tradeoff between best speed (1) and best compression (9)
+                }
+            })
+        );
     }
 
     saveProjectSb3ToCodio () {
