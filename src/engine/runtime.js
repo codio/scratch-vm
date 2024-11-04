@@ -627,15 +627,6 @@ class Runtime extends EventEmitter {
     }
 
     /**
-     * Event name for when the user picks a bluetooth device to connect to
-     * via Companion Device Manager (CDM)
-     * @const {string}
-     */
-    static get USER_PICKED_PERIPHERAL () {
-        return 'USER_PICKED_PERIPHERAL';
-    }
-
-    /**
      * Event name for reporting that a peripheral has connected.
      * This causes the status button in the blocks menu to indicate 'connected'.
      * @const {string}
@@ -1616,38 +1607,6 @@ class Runtime extends EventEmitter {
             const scriptElement = document.getElementById(
                 'scratch-link-extension-script'
             );
-            if (!scriptElement) {
-                const script = document.createElement('script');
-                script.id = 'scratch-link-extension-script';
-                document.body.appendChild(script);
-
-                // Tell the browser extension to inject its script.
-                // If the extension isn't present or isn't active, this will do nothing.
-                self.postMessage('inject-scratch-link-script', self.origin);
-            }
-        }
-    }
-
-    /**
-     * One-time initialization for Scratch Link support.
-     */
-    _initScratchLink () {
-        // Check that we're actually in a real browser, not Node.js or JSDOM, and we have a valid-looking origin.
-        // note that `if (self?....)` will throw if `self` is undefined, so check for that first!
-        if (typeof self !== 'undefined' &&
-            typeof document !== 'undefined' &&
-            document.getElementById &&
-            self.origin &&
-            self.origin !== 'null' && // note this is a string comparison, not a null check
-            self.navigator &&
-            self.navigator.userAgent &&
-            !(
-                self.navigator.userAgent.includes('Node.js') ||
-                self.navigator.userAgent.includes('jsdom')
-            )
-        ) {
-            // Create a script tag for the Scratch Link browser extension, unless one already exists
-            const scriptElement = document.getElementById('scratch-link-extension-script');
             if (!scriptElement) {
                 const script = document.createElement('script');
                 script.id = 'scratch-link-extension-script';
