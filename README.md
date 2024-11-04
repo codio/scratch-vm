@@ -1,6 +1,8 @@
 ## codio fork of scratch-vm
 #### Scratch VM is a library for representing, running, and maintaining the state of computer programs written using [Scratch Blocks](https://github.com/scratchfoundation/scratch-blocks).
 
+[![CI/CD](https://github.com/scratchfoundation/scratch-vm/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/scratchfoundation/scratch-vm/actions/workflows/ci-cd.yml)
+
 ## Installation
 This requires you to have Git and Node.js installed.
 
