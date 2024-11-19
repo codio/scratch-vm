@@ -568,6 +568,9 @@ const serialize = function (runtime, targetId) {
         return serializedTargets[0];
     }
 
+    if (serializedTargets.length === 0) {
+        throw new Error('No targets!!!');
+    }
     obj.targets = serializedTargets;
 
     obj.monitors = serializeMonitors(runtime.getMonitorState());
