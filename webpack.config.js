@@ -6,7 +6,8 @@ const ScratchWebpackConfigBuilder = require('scratch-webpack-configuration');
 
 const common = {
     libraryName: 'scratch-vm',
-    rootPath: path.resolve(__dirname)
+    rootPath: path.resolve(__dirname),
+    publicPath: ''
 };
 
 const nodeBuilder = new ScratchWebpackConfigBuilder(common)
