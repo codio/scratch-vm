@@ -508,8 +508,8 @@ class Blocks {
                     currTarget.comments[e.commentId].x = e.xy.x;
                     currTarget.comments[e.commentId].y = e.xy.y;
                 }
+                this.emitProjectChanged();
             }
-            this.emitProjectChanged();
             break;
         case 'comment_change':
             if (this.runtime.getEditingTarget()) {
